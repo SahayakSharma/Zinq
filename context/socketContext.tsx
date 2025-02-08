@@ -5,7 +5,7 @@ import { io, Socket } from "socket.io-client";
 const SocketContext=createContext<Socket|null>(null);
 
 export const SocketProvider = ({children} : {children:React.ReactNode}) =>{
-    const socket=useMemo(()=>io("http://15.207.3.86:3000"),[]);
+    const socket=useMemo(()=>io("ws://15.207.3.86:3000"),[]);
     return(
         <SocketContext.Provider value={socket}>
             {children}
