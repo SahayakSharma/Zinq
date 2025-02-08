@@ -16,7 +16,7 @@ export class firebaseconfig {
     return firebaseconfig.instance;
   }
 
-  async createuserwithemailpassword(email: string, password: string) {
+  async createuserwithemailpassword(email: string, password: string):Promise<{status:string,message:string}> {
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
@@ -25,25 +25,29 @@ export class firebaseconfig {
       .catch((error) => {
         const errorMessage = error.message;
         console.log(errorMessage)
-      });
-  }
-
-  async signinusingemailpassword(email: string, password: string) {
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {
-        console.log(user)
-        return({
-          status:"200",
-          message:"User logged in"
-        })
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
         return({
           status:"400",
           message:errorMessage
         })
       });
+      return {
+        status:"400",
+        message:"Unacceptable values provided"
+      }
+  }
+
+  async signinusingemailpassword(email: string, password: string):Promise<{status:string,message:string}> {
+    const user=await signInWithEmailAndPassword(auth, email, password)
+    if(user){
+      return{
+        status:"200",
+        message:"Signin Successfull"
+      }
+    }
+    return {
+      status:"400",
+      message:"Invalid Credentials"
+    }
   }
   signout(){
     try{
@@ -66,7 +70,23 @@ export class firebaseconfig {
       }
     }
     
+    
   }
+
+  getCurrentUser(){
+      try{
+        const user=auth.currentUser;
+        if(user) {
+          return user
+        }
+        return null
+      }
+      catch{
+        return null
+      }
+  }
+
+  
 
 
 

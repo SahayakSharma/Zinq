@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {auth} from "@/config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { GeneralLoader } from "@/components";
 export default function AuthLayout({children}:Readonly<{children:React.ReactNode}>){
     const router=useRouter();
     const [loading,setloading]=useState(true)
@@ -16,9 +17,7 @@ export default function AuthLayout({children}:Readonly<{children:React.ReactNode
     },[onAuthStateChanged])
     return(
         loading?(
-            <div>
-                <p>Loading ...</p>
-            </div>
+            <GeneralLoader/>
         ):(
             <>
                 {children}
