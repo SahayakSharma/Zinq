@@ -24,7 +24,9 @@ export default function Page() {
             console.log("List of all users : ", allusers)
             setusers(allusers);
         })
-        
+        return(()=>{
+            socket?.emit("WentOffline",{email:user?.email});
+        })
     }, [])
     return (
         <div className="w-full h-screen p-[50px]  text-[20px] font-light">

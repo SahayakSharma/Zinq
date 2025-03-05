@@ -15,9 +15,12 @@ export default function ReceiveCall(){
     const secondPersonVideo=useRef<HTMLVideoElement>(null);
     // const [userStream,setuserstream]=useState<MediaStream|null>(null)
     async function HandleCam(pc:RTCPeerConnection){
+        console.log("cam enabling")
         const stream=await navigator.mediaDevices.getUserMedia({audio:true,video:true});
         // setuserstream(stream);
-        pc.addTrack(stream.getVideoTracks()[0]);
+        // pc.addTrack(stream.getVideoTracks()[0]);
+        stream.getVideoTracks().forEach(track => pc.addTrack(track, stream));
+        // console.log(stream.getVideoTracks()[0]);
         if(ownVideoRef.current){
             ownVideoRef.current.srcObject=stream;
         }
@@ -26,7 +29,8 @@ export default function ReceiveCall(){
         socket?.emit("CameOnline",{email:user?.email});
         socket?.emit("CallAnswered",{senderEmail:user?.email,receiverEmail:email});
         const pc=new RTCPeerConnection();
-        HandleCam(pc);
+        // HandleCam(pc);
+        
         pc.onicecandidate=(event)=>{
             console.log("Ice Candidates Popped Up. Sending to the other side !")
             if(event.candidate){
@@ -42,6 +46,7 @@ export default function ReceiveCall(){
         }
         
         socket?.on("offerReceived",async(data)=>{
+            await HandleCam(pc);
             console.log("Offer Received")
             const offer=data.offer;
             const senderEmail=data.senderEmail;
@@ -55,6 +60,7 @@ export default function ReceiveCall(){
             socket?.emit("answerGenerated",{answer:pc.localDescription,senderEmail:user?.email,receiverEmail:senderEmail,audio:audio,video:video});
         })
         socket?.on("IceCandidates",async(data)=>{
+            if(pc.remoteDescription===null) return;
             console.log("Ice Candidates Received and added !")
             const candidates=data.candidates;
             await pc.addIceCandidate(candidates);
