@@ -41,8 +41,20 @@ export default function OnCall({ email }: { email: string }) {
         pc.ontrack = (event) => {
             console.log("Track Received")
             if (secondPersonVideo.current) {
-                secondPersonVideo.current.srcObject = new MediaStream([event.track]);
-                console.log("setting second person video : ",secondPersonVideo.current)
+                // secondPersonVideo.current.srcObject = new MediaStream([event.track]);
+                // console.log("setting second person video : ",secondPersonVideo.current)
+                let stream = secondPersonVideo.current.srcObject as MediaStream | null;
+
+                // If no stream exists, create one and set it to video ref
+                if (!stream) {
+                    stream = new MediaStream();
+                    secondPersonVideo.current.srcObject = stream; // Now video ref holds this stream
+                }
+
+                // Adding track to the same stream (which is also assigned to the video)
+                stream.addTrack(event.track);
+
+                console.log("✅ Second person video set!", secondPersonVideo.current.srcObject);
             }
         }
         pc.onicecandidate = (event) => {
