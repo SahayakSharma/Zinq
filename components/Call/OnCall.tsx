@@ -41,8 +41,8 @@ export default function OnCall({ email }: { email: string }) {
         pc.ontrack = (event) => {
             console.log("Track Received")
             if (secondPersonVideo.current) {
-                console.log("setting second person video")
                 secondPersonVideo.current.srcObject = new MediaStream([event.track]);
+                console.log("setting second person video : ",secondPersonVideo.current)
             }
         }
         pc.onicecandidate = (event) => {
