@@ -41,6 +41,7 @@ export default function ReceiveCall(){
         pc.ontrack=(event)=>{
             console.log("Track Received !")
             if(secondPersonVideo.current){
+                console.log("setting second person video")
                 secondPersonVideo.current.srcObject=new MediaStream([event.track]);
             }
         }
